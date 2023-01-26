@@ -51,7 +51,7 @@ module.exports = class attributeValidator {
   }
 
   /**
-   * validates if `price` is an double
+   * validates if `price` is a currency
    */
   static price(price) {
     try {
