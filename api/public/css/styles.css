@@ -1,0 +1,26 @@
+.cover {
+  object-fit: cover;
+  width: 600px;
+  height: 400px;
+}
+
+.endpoint {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0px;
+  margin-top: 20px;
+}
+
+.method {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0px;
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.epBody {
+  font-size: 16px;
+  margin: 0px;
+  margin-left: 40px;
+}
