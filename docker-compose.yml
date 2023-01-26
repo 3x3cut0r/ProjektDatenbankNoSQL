@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  # https://hub.docker.com/_/node
+  #  api:
+  #    build:
+  #      context: ./api
+  #      dockerfile: ../docker/api/Dockerfile
+  #    container_name: api
+  #    stdin_open: true
+  #    environment:
+  #      PORT: 3001
+  #      NODE_ENV: development
+  #      CHOKIDAR_USEPOLLING: true
+  #    volumes:
+  #      - ./api:/app
+  #      - /app/node_modules
+  #    ports:
+  #      - '3001:3001'
+  #    depends_on:
+  #      - mongo
+
+  # https://hub.docker.com/_/mongo
+  mongo:
+    container_name: mongo
+    image: mongo:5.0
+    command: mongod --config /etc/mongod.conf --auth
+    ports:
+      - '27017:27017'
+    environment:
+      TZ: 'Europe/Berlin'
+      MONGO_INITDB_ROOT_USERNAME: 'root'
+      MONGO_INITDB_ROOT_PASSWORD: 'root'
+      MONGO_INITDB_DATABASE: 'project'
+    volumes:
+      - ./docker/mongodb/data:/data/db
+      - ./docker/mongodb/mongod.conf:/etc/mongod.conf
+      - ./docker/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  # https://hub.docker.com/_/mongo-express
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - 8087:8081
+    environment:
+      TZ: 'Europe/Berlin'
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: 'root'
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 'root'
+      ME_CONFIG_BASICAUTH_USERNAME: 'admin'
+      ME_CONFIG_BASICAUTH_PASSWORD: 'admin'
+    depends_on:
+      - mongo
