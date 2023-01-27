@@ -35,7 +35,7 @@ services:
     volumes:
       - ./docker/mongodb/data:/data/db
       - ./docker/mongodb/mongod.conf:/etc/mongod.conf
-      - ./docker/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./docker/mongodb/conf:/docker-entrypoint-initdb.d:ro
 
   # https://hub.docker.com/_/mongo-express
   mongo-express:
