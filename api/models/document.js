@@ -71,12 +71,14 @@ module.exports = class Document {
       const db = getDB();
       // if _id is present, then update
       if (document._id) {
-        await db
+        const updatedDocument = await db
           .collection(collection)
           .findOneAndUpdate(
-            { _id: new mongodb.ObjectId(document._id) },
-            { $set: document }
+            { _id: document._id },
+            { $set: document },
+            { returnNewDocument: true }
           );
+        document = updatedDocument.value;
       }
 
       // else: add

@@ -56,8 +56,11 @@ exports.saveItem = (req, res, next) => {
     Document.save({ collection: 'items', document: body })
       .then((document) => {
         if (document) {
-          document.status = _id ? 'updated' : 'added';
-          JSend.success(res, { data: document });
+          JSend.success(res, {
+            code: _id ? 200 : 201,
+            message: _id ? 'updated' : 'created',
+            data: document,
+          });
         } else {
           JSend.fail(res, { code: 400, data: 'something went wrong' });
         }
@@ -83,8 +86,7 @@ exports.deleteItem = (req, res, next) => {
     Document.deleteByID({ collection: 'items', _id })
       .then((document) => {
         if (document) {
-          document.status = 'deleted';
-          JSend.success(res, { data: document });
+          JSend.success(res, { message: 'deleted', data: document });
         } else {
           JSend.fail(res, { code: 404, data: 'no such _id: ' + _id });
         }
