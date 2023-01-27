@@ -6,21 +6,17 @@ const itemsController = require('../controllers/items');
 // create application/json parser
 const jsonParser = bodyParser.json();
 
+// get == getItem
+router.get('/[Gg]et([Ii]tem)?/:id', itemsController.getItem);
+
+// save == saveItem
+router.post('/[Ss]ave([Ii]tem)?', jsonParser, itemsController.saveItem);
+
+// delete == deleteItem
+router.post('/[Dd]elete([Ii]tem)?/:id', itemsController.deleteItem);
+
 // fetchAll == getItems
 router.get('/[Ff]etch[Aa]ll', itemsController.fetchAll);
 router.get('/[Gg]et[Ii]tems', itemsController.fetchAll);
-
-// get == getItem
-router.get('/[Gg]et([Ii]tem)?/:uuid', itemsController.getItem);
-
-// add == addItem
-router.post('/[Aa]dd([Ii]tem)?', jsonParser, itemsController.addItem);
-
-// update == updateItem
-router.put(
-  '/[Uu]pdate([Ii]tem)?/:uuid',
-  jsonParser,
-  itemsController.updateItem
-);
 
 module.exports = router;
