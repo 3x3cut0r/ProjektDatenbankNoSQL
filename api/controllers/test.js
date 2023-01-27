@@ -1,23 +1,43 @@
+const mongodb = require('mongodb');
 const Document = require('../models/document');
-const validator = require('validator');
-const attributeValidator = require('../utils/validators/attributeValidator');
 const JSend = require('../utils/jsend');
-const Fs = require('fs');
-const path = require('path');
-const rootDir = require('../utils/rootDir');
 
 exports.getTest = async (req, res, next) => {
-  /* const newItem = new Item({ name: 'Handbag', price: '34,95' });
-  newItem.add(); */
-
-  // const allItems = await Document.fetchAll('items');
-
-  const singleItem = await Document.getByUUID({
+  // add
+  let newDocument = await Document.save({
     collection: 'items',
-    uuid: '28105d81-dac5-48a4-b70d-a40b2882a719',
+    document: { name: 'Handbag', price: '34,95' },
   });
+  console.log('🚀 - exports.getTest= - newDocument', newDocument);
 
-  JSend.success(res, { code: 200, data: singleItem });
+  // update
+  newDocument.document.price = '39,99';
+  const updatedDocument = await newDocument.save();
+  console.log('🚀 - exports.getTest= - updatedDocument', updatedDocument);
+
+  // get
+  const singleDocument = await Document.get({
+    collection: 'items',
+    key: 'price',
+    value: '39,99',
+  });
+  console.log('🚀 - exports.getTest= - singleDocument', singleDocument);
+
+  // getbyID
+  const singleDocumentByID = await Document.getByID({
+    collection: 'items',
+    _id: '63d3a8b814c49e703d25fb4f',
+  });
+  console.log('🚀 - exports.getTest= - singleDocumentByID', singleDocumentByID);
+
+  // delete
+  const deletedDocument = await newDocument.delete();
+  console.log('🚀 - exports.getTest= - deletedDocument', deletedDocument);
+
+  // fetchAll
+  const allItems = await Document.fetchAll('items');
+
+  JSend.success(res, { code: 200 /*  data: allItems */ });
 };
 
 exports.postTest = (req, res, next) => {
