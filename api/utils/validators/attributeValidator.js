@@ -14,20 +14,20 @@ const validator = require('validator');
  */
 module.exports = class attributeValidator {
   /**
-   * validates if `uuid` is an valid UUID (all versions)
+   * validates if `_id` is an valid _id
    */
-  static uuid(uuid) {
+  static _id(_id) {
     try {
-      if (uuid == undefined) {
-        return ['uuid: key not found'];
+      if (_id == undefined) {
+        return ['_id: key not found'];
       } else {
-        uuid = String(uuid);
+        _id = String(_id);
       }
     } catch (e) {
       throw Error(e);
     }
-    if (!validator.isUUID(uuid)) {
-      return ['uuid is not a valid UUID: ' + uuid];
+    if (!validator.isAlphanumeric(_id, 'de-DE')) {
+      return ['_id must be alphanumeric (a-zA-Z0-9): ' + _id];
     }
     return 0;
   }
