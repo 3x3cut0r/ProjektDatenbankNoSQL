@@ -108,10 +108,10 @@ module.exports = class Document {
 
   static async getByID({ collection, _id }) {
     try {
-      const document = await this.get({
+      const document = await Document.get({
         collection,
         key: '_id',
-        value: mongodb.ObjectId(_id),
+        value: _id,
       });
       if (document) {
         return new Document({ collection, document: document.document });
@@ -125,7 +125,7 @@ module.exports = class Document {
   static async delete({ collection, key, value }) {
     try {
       const db = getDB();
-      const document = this.get({ collection, key, value });
+      const document = Document.get({ collection, key, value });
       if (document) {
         await db.collection(collection).deleteOne({ [key]: value });
         return new Document({ collection, document: document.document });
@@ -138,14 +138,14 @@ module.exports = class Document {
 
   static async deleteByID({ collection, _id }) {
     try {
-      const document = await this.getByID({ collection, _id });
+      const document = await Document.getByID({ collection, _id });
       if (document) {
-        await this.delete({
+        await Document.delete({
           collection,
           key: '_id',
-          value: mongodb.ObjectId(_id),
+          value: _id,
         });
-        return new Document({ collection, document });
+        return new Document({ collection, document: document.document });
       }
       return null;
     } catch (err) {

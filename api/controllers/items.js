@@ -10,7 +10,7 @@ exports.getItem = (req, res, next) => {
   // if valid _id
   if (Object.keys(idError).length === 0) {
     // get Item
-    Document.getByID(_id)
+    Document.getByID({ collection: 'items', _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { data: document });
@@ -47,7 +47,7 @@ exports.saveItem = (req, res, next) => {
 
   if (_id) {
     const _idError = attributeValidator._id(_id);
-    errors = errors.concat(_idError);
+    if (_idError) errors = errors.concat(_idError);
   }
 
   // if valid params
@@ -55,8 +55,12 @@ exports.saveItem = (req, res, next) => {
     // save Item
     Document.save({ collection: 'items', document: body })
       .then((document) => {
-        document.status = _id ? 'updated' : 'added';
-        JSend.success(res, { data: document });
+        if (document) {
+          document.status = _id ? 'updated' : 'added';
+          JSend.success(res, { data: document });
+        } else {
+          JSend.fail(res, { code: 400, data: 'something went wrong' });
+        }
       })
       .catch((err) => {
         next(err);
@@ -75,17 +79,14 @@ exports.deleteItem = (req, res, next) => {
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
-    // get Item
-    Document.deleteByID(_id)
+    // delete Item
+    Document.deleteByID({ collection: 'items', _id })
       .then((document) => {
         if (document) {
           document.status = 'deleted';
           JSend.success(res, { data: document });
         } else {
-          JSend.fail(res, {
-            code: 404,
-            data: ['item: no such _id: ' + _id],
-          });
+          JSend.fail(res, { code: 404, data: 'no such _id: ' + _id });
         }
       })
       .catch((err) => {
