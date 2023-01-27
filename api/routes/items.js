@@ -7,7 +7,7 @@ const itemsController = require('../controllers/items');
 const jsonParser = bodyParser.json();
 
 // get == getItem
-router.get('/[Gg]et([Ii]tem)?/:id', itemsController.getItem);
+router.get('/[Gg]et([Ii]tem)?/:id', itemsController.findItem);
 
 // save == saveItem
 router.post('/[Ss]ave([Ii]tem)?', jsonParser, itemsController.saveItem);

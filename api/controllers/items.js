@@ -3,14 +3,14 @@ const JSend = require('../utils/jsend');
 const attributeValidator = require('../utils/validators/attributeValidator');
 const itemValidator = require('../utils/validators/itemValidator');
 
-exports.getItem = (req, res, next) => {
+exports.findItem = (req, res, next) => {
   const _id = req.params.id ? String(req.params.id).trim() : null;
   const idError = attributeValidator._id(_id);
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
     // get Item
-    Document.getByID({ collection: 'items', _id })
+    Document.findOne({ collection: 'items', key: '_id', value: _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { data: document });
@@ -83,7 +83,7 @@ exports.deleteItem = (req, res, next) => {
   // if valid _id
   if (Object.keys(idError).length === 0) {
     // delete Item
-    Document.deleteByID({ collection: 'items', _id })
+    Document.deleteOne({ collection: 'items', key: '_id', value: _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { message: 'deleted', data: document });

@@ -13,10 +13,8 @@ const UUID = require('uuid');
  *
  * @static_methods
  *  - save ({ collection, document }) -> save = add OR update
- *  - get ({ collection, key, value })
- *  - getByID ({ collection, id })
- *  - delete ({ collection, key, value })
- *  - deleteByID ({ collection, id })
+ *  - findOne ({ collection, key, value })
+ *  - deleteOne ({ collection, key, value })
  *  - fetchAll ( collection )
  */
 
@@ -32,12 +30,14 @@ module.exports = class Document {
       // if _id is present, then update
       if (this.document._id) {
         // update
-        await db
+        const updatedDocument = await db
           .collection(this.collection)
           .findOneAndUpdate(
             { _id: new mongodb.ObjectId(this.document._id) },
-            { $set: this.document }
+            { $set: this.document },
+            { returnDocument: 'after' } // returnDocument: 'before' / 'after' update
           );
+        this.document = updatedDocument.value;
       }
 
       // else: add
@@ -76,7 +76,7 @@ module.exports = class Document {
           .findOneAndUpdate(
             { _id: document._id },
             { $set: document },
-            { returnNewDocument: true }
+            { returnDocument: 'after' } // returnDocument: 'before' / 'after' update
           );
         document = updatedDocument.value;
       }
@@ -93,7 +93,7 @@ module.exports = class Document {
     }
   }
 
-  static async get({ collection, key, value }) {
+  static async findOne({ collection, key, value }) {
     try {
       const db = getDB();
       const document = await db
@@ -108,45 +108,12 @@ module.exports = class Document {
     }
   }
 
-  static async getByID({ collection, _id }) {
-    try {
-      const document = await Document.get({
-        collection,
-        key: '_id',
-        value: _id,
-      });
-      if (document) {
-        return new Document({ collection, document: document.document });
-      }
-      return null;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  static async delete({ collection, key, value }) {
+  static async deleteOne({ collection, key, value }) {
     try {
       const db = getDB();
       const document = Document.get({ collection, key, value });
       if (document) {
         await db.collection(collection).deleteOne({ [key]: value });
-        return new Document({ collection, document: document.document });
-      }
-      return null;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  static async deleteByID({ collection, _id }) {
-    try {
-      const document = await Document.getByID({ collection, _id });
-      if (document) {
-        await Document.delete({
-          collection,
-          key: '_id',
-          value: _id,
-        });
         return new Document({ collection, document: document.document });
       }
       return null;
