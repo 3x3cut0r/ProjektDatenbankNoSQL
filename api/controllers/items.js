@@ -8,7 +8,7 @@ exports.getItem = (req, res, next) => {
   const idError = attributeValidator._id(_id);
 
   // if valid _id
-  if (!idError) {
+  if (Object.keys(idError).length === 0) {
     // get Item
     Document.getByID(_id)
       .then((document) => {
@@ -34,28 +34,38 @@ exports.getItem = (req, res, next) => {
 
 exports.saveItem = (req, res, next) => {
   const body = req.body;
-  const update = req.body._id ? true : false;
-  const uuid = req.body.uuid ? String(req.body.uuid).trim() : null;
+  const _id = req.body._id ? String(req.body._id).trim() : null;
+
+  // required parameters
   const name = req.body.name ? String(req.body.name).trim() : null;
   const price = req.body.price ? String(req.body.price).trim() : null;
 
   let errors = itemValidator.validate({
-    uuid,
     name,
     price,
   });
 
+  if (_id) {
+    const _idError = attributeValidator._id(_id);
+    errors = errors.concat(_idError);
+  }
+
   // if valid params
-  if (!errors) {
+  if (Object.keys(errors).length === 0) {
     // save Item
     Document.save({ collection: 'items', document: body })
       .then((document) => {
-        document.status = update ? 'updated' : 'added';
+        document.status = _id ? 'updated' : 'added';
         JSend.success(res, { data: document });
       })
       .catch((err) => {
         next(err);
       });
+  }
+
+  // if invalid params
+  else {
+    JSend.fail(res, { data: errors });
   }
 };
 
@@ -64,7 +74,7 @@ exports.deleteItem = (req, res, next) => {
   const idError = attributeValidator._id(_id);
 
   // if valid _id
-  if (!idError) {
+  if (Object.keys(idError).length === 0) {
     // get Item
     Document.deleteByID(_id)
       .then((document) => {

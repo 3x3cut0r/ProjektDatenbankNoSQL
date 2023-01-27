@@ -60,7 +60,7 @@ module.exports = class attributeValidator {
       } else {
         price = String(price);
       }
-      return validator.isCurrency(price, 'de-DE', {
+      return validator.isCurrency(price, {
         symbol: '€',
         require_symbol: false,
         allow_space_after_symbol: false,
