@@ -1,4 +1,5 @@
 const { getDB } = require('../utils/database');
+const mongodb = require('mongodb');
 const UUID = require('uuid');
 
 /**
@@ -7,29 +8,47 @@ const UUID = require('uuid');
  * @constructor({ collection, document })
  *
  * @methods
- *  - add ()
+ *  - save () -> save = add OR update
  *  - delete ()
- *  - update ()
  *
  * @static_methods
- *  - add ({ collection, document })
- *  - getByUUID ({ collection, uuid })
+ *  - save ({ collection, document }) -> save = add OR update
+ *  - get ({ collection, key, value })
+ *  - getByID ({ collection, id })
+ *  - delete ({ collection, key, value })
+ *  - deleteByID ({ collection, id })
  *  - fetchAll ( collection )
  */
 
-module.exports = class Item {
+module.exports = class Document {
   constructor({ collection, document }) {
     this.collection = collection;
     this.document = document;
   }
 
-  async add() {
+  async save() {
     try {
       const db = getDB();
-      const result = await db
-        .collection(this.collection)
-        .insertOne(this.document);
-      return this.document;
+      // if _id is present, then update
+      if (this.document._id) {
+        // update
+        await db
+          .collection(this.collection)
+          .findOneAndUpdate(
+            { _id: new mongodb.ObjectId(this.document._id) },
+            { $set: this.document }
+          );
+      }
+
+      // else: add
+      else {
+        const result = await db
+          .collection(this.collection)
+          .insertOne(this.document);
+        // add newly created insertedId to Document
+        this.document._id = result.insertedId;
+      }
+      return this;
     } catch (err) {
       throw err;
     }
@@ -38,43 +57,97 @@ module.exports = class Item {
   async delete() {
     try {
       const db = getDB();
-      const result = await db
+      await db
         .collection(this.collection)
-        .insertOne(this.document);
+        .deleteOne({ _id: new mongodb.ObjectId(this.document._id) });
       return this;
     } catch (err) {
       throw err;
     }
   }
 
-  static async add({ collection, document }) {
+  static async save({ collection, document }) {
     try {
       const db = getDB();
-      const result = await db.collection(collection).insertOne(document);
-      return document;
+      // if _id is present, then update
+      if (document._id) {
+        await db
+          .collection(collection)
+          .findOneAndUpdate(
+            { _id: new mongodb.ObjectId(document._id) },
+            { $set: document }
+          );
+      }
+
+      // else: add
+      else {
+        const result = await db.collection(collection).insertOne(document);
+        // add newly created insertedId to Document
+        document._id = result.insertedId;
+      }
+      return new Document({ collection, document });
     } catch (err) {
       throw err;
     }
   }
 
-  static async getByID({ collection, id }) {
+  static async get({ collection, key, value }) {
     try {
       const db = getDB();
-      const result = await db.collection(collection).find({ _id: id }).next();
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  static async getByUUID({ collection, uuid }) {
-    try {
-      const db = getDB();
-      const result = await db
+      const document = await db
         .collection(collection)
-        .find({ uuid: uuid })
-        .next();
-      return result;
+        .findOne({ [key]: value });
+      if (document) {
+        return new Document({ collection, document });
+      }
+      return null;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async getByID({ collection, _id }) {
+    try {
+      const document = await this.get({
+        collection,
+        key: '_id',
+        value: mongodb.ObjectId(_id),
+      });
+      if (document) {
+        return new Document({ collection, document: document.document });
+      }
+      return null;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async delete({ collection, key, value }) {
+    try {
+      const db = getDB();
+      const document = this.get({ collection, key, value });
+      if (document) {
+        await db.collection(collection).deleteOne({ [key]: value });
+        return new Document({ collection, document: document.document });
+      }
+      return null;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async deleteByID({ collection, _id }) {
+    try {
+      const document = await this.getByID({ collection, _id });
+      if (document) {
+        await this.delete({
+          collection,
+          key: '_id',
+          value: mongodb.ObjectId(_id),
+        });
+        return new Document({ collection, document });
+      }
+      return null;
     } catch (err) {
       throw err;
     }
@@ -83,8 +156,8 @@ module.exports = class Item {
   static async fetchAll(collection) {
     try {
       const db = getDB();
-      const results = await db.collection(collection).find().toArray();
-      return results;
+      const documents = await db.collection(collection).find().toArray();
+      return documents;
     } catch (err) {
       throw err;
     }
