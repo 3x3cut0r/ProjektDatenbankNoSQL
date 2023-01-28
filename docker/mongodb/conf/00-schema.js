@@ -11,23 +11,27 @@ db.createUser({
 
 db = new Mongo().getDB('project');
 
-db.createCollection('customers', { capped: false });
-db.createCollection('items', { capped: false });
+db.createCollection('users', { capped: false });
+db.createCollection('tweets', { capped: false });
 
-db.items.insert([
+db.tweets.insert([
   {
-    _id: '63d3bcec7a1a6c9fad78ef98',
-    price: '49,00',
-    name: 'T-Shirt',
+    _id: ObjectId('63d3bcec7a1a6c9fad78ef98'),
+    title: 'IT is cool',
+    text: 'yey i love IT',
   },
   {
-    _id: '63d3bcec7a1a6c9fad78ef99',
-    price: '89,99',
-    name: 'Jeans',
-  },
-  {
-    _id: '63d3bcec7a1a6c9fad78ef9a',
-    price: '120,00',
-    name: 'Jacket',
+    _id: ObjectId('63d3bcec7a1a6c9fad78ef99'),
+    title: 'NoSQL is cool',
+    text: 'yey i love NoSQL',
+    likes: 15,
+    dislikes: 4,
+    retweets: {
+      _id: ObjectId('63d3bcec7a1a6c9fad78efa0'),
+      title: 'seriously?',
+      text: 'SQL is much cooler!',
+      likes: 6,
+      dislikes: 10,
+    },
   },
 ]);

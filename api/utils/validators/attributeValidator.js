@@ -8,9 +8,9 @@ const validator = require('validator');
  * @returns {array} Array of Strings with the error messages
  *
  * @methods
- *  - uuid ( uuid )
- *  - name ( name )
- *  - price ( price )
+ *  - _id ( _id )
+ *  - title ( title )
+ *  - text ( text )
  */
 module.exports = class attributeValidator {
   /**
@@ -33,46 +33,46 @@ module.exports = class attributeValidator {
   }
 
   /**
-   * validates if `name` is an alphanumeric name with valid characters (a-zA-Z0-9)
+   * validates if `title` is an alphanumeric title with valid characters (a-zA-Z0-9)
    */
-  static name(name) {
+  static title(title) {
     try {
-      if (name == undefined) {
-        return ['name: key not found'];
+      if (title == undefined) {
+        return ['title: key not found'];
       } else {
-        name = String(name);
+        title = String(title);
       }
-      return validator.isAlphanumeric(name, 'de-DE', { ignore: '-_. ' })
+      return validator.isAlphanumeric(title, 'de-DE', {
+        ignore: '+-_.:,;&%*()[]{}#!? ',
+      })
         ? 0
-        : ['name must be alphanumeric (a-zA-Z0-9-_. ): ' + name];
+        : [
+            'title must be alphanumeric (a-zA-Z0-9+-_.:,;&%*()[]{}#!? ): ' +
+              title,
+          ];
     } catch (e) {
       throw Error(e);
     }
   }
 
   /**
-   * validates if `price` is a currency
+   * validates if `text` is a currency
    */
-  static price(price) {
+  static text(text) {
     try {
-      if (price == undefined) {
-        return ['price: key not found'];
+      if (text == undefined) {
+        return ['text: key not found'];
       } else {
-        price = String(price);
+        text = String(text);
       }
-      return validator.isCurrency(price, {
-        symbol: '€',
-        require_symbol: false,
-        allow_space_after_symbol: false,
-        allow_negatives: false,
-        negative_sign_before_digits: false,
-        negative_sign_after_digits: false,
-        thousands_separator: '.',
-        decimal_separator: ',',
-        digits_after_decimal: [2],
+      return validator.isAlphanumeric(text, 'de-DE', {
+        ignore: '+-_.:,;&%*()[]{}\'"#!? ',
       })
         ? 0
-        : ['price format invalid: "1.000,00 €": ' + price];
+        : [
+            'text must be alphanumeric (a-zA-Z0-9+-_.:,;&%*()[]{}\'"#!? ): ' +
+              text,
+          ];
     } catch (e) {
       throw Error(e);
     }

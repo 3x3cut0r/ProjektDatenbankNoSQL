@@ -11,7 +11,7 @@ const errorController = require('./controllers/error');
 const path = require('path');
 
 const indexRouter = require('./routes/index');
-const itemsRouter = require('./routes/items');
+const tweetsRouter = require('./routes/tweets');
 const testRouter = require('./routes/test');
 
 const app = express();
@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', indexRouter);
-app.use('/item(s)?', itemsRouter);
+app.use('/tweet(s)?', tweetsRouter);
 app.use('/test', testRouter); // for testing only
 
 // catch 404 and forward to error handler

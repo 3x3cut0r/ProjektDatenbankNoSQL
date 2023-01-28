@@ -1,23 +1,23 @@
 const Document = require('../models/document');
 const JSend = require('../utils/jsend');
 const attributeValidator = require('../utils/validators/attributeValidator');
-const itemValidator = require('../utils/validators/itemValidator');
+const tweetValidator = require('../utils/validators/tweetValidator');
 
-exports.findItem = (req, res, next) => {
+exports.findTweet = (req, res, next) => {
   const _id = req.params.id ? String(req.params.id).trim() : null;
   const idError = attributeValidator._id(_id);
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
-    // get Item
-    Document.findOne({ collection: 'items', key: '_id', value: _id })
+    // get Tweet
+    Document.findOne({ collection: 'tweets', key: '_id', value: _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { data: document });
         } else {
           JSend.fail(res, {
             code: 404,
-            data: ['item: no such _id: ' + _id],
+            data: ['tweet: no such _id: ' + _id],
           });
         }
       })
@@ -32,20 +32,20 @@ exports.findItem = (req, res, next) => {
   }
 };
 
-exports.saveItem = (req, res, next) => {
+exports.saveTweet = (req, res, next) => {
   const body = req.body;
   const _id = req.body._id ? String(req.body._id).trim() : null;
-  let errors;
+  let errors = [];
 
   // required parameters
-  const name = req.body.name ? String(req.body.name).trim() : null;
-  const price = req.body.price ? String(req.body.price).trim() : null;
+  const title = req.body.title ? String(req.body.title).trim() : null;
+  const text = req.body.text ? String(req.body.text).trim() : null;
 
   if (!_id) {
     // check only on add, not on update
-    errors = itemValidator.validate({
-      name,
-      price,
+    errors = tweetValidator.validate({
+      title,
+      text,
     });
   }
 
@@ -56,8 +56,8 @@ exports.saveItem = (req, res, next) => {
 
   // if valid params
   if (Object.keys(errors).length === 0) {
-    // save Item
-    Document.save({ collection: 'items', document: body })
+    // save Tweet
+    Document.save({ collection: 'tweets', document: body })
       .then((document) => {
         if (document) {
           JSend.success(res, {
@@ -80,14 +80,14 @@ exports.saveItem = (req, res, next) => {
   }
 };
 
-exports.deleteItem = (req, res, next) => {
+exports.deleteTweet = (req, res, next) => {
   const _id = req.params.id ? String(req.params.id).trim() : null;
   const idError = attributeValidator._id(_id);
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
-    // delete Item
-    Document.deleteOne({ collection: 'items', key: '_id', value: _id })
+    // delete Tweet
+    Document.deleteOne({ collection: 'tweets', key: '_id', value: _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { message: 'deleted', data: document });
@@ -107,10 +107,10 @@ exports.deleteItem = (req, res, next) => {
 };
 
 exports.fetchAll = (req, res, next) => {
-  // get all items from database
-  Document.fetchAll('items')
-    .then((items) => {
-      JSend.success(res, { data: items });
+  // get all tweets from database
+  Document.fetchAll('tweets')
+    .then((tweets) => {
+      JSend.success(res, { data: tweets });
     })
     .catch((err) => {
       next(err);
