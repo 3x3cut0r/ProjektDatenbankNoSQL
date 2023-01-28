@@ -35,15 +35,19 @@ exports.findItem = (req, res, next) => {
 exports.saveItem = (req, res, next) => {
   const body = req.body;
   const _id = req.body._id ? String(req.body._id).trim() : null;
+  let errors;
 
   // required parameters
   const name = req.body.name ? String(req.body.name).trim() : null;
   const price = req.body.price ? String(req.body.price).trim() : null;
 
-  let errors = itemValidator.validate({
-    name,
-    price,
-  });
+  if (!_id) {
+    // check only on add, not on update
+    errors = itemValidator.validate({
+      name,
+      price,
+    });
+  }
 
   if (_id) {
     const _idError = attributeValidator._id(_id);
