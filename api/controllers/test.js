@@ -3,6 +3,7 @@ const Document = require('../models/document');
 const JSend = require('../utils/jsend');
 
 exports.getTest = async (req, res, next) => {
+  /* 
   // add
   let newDocument = await Document.save({
     collection: 'items',
@@ -36,6 +37,13 @@ exports.getTest = async (req, res, next) => {
 
   // fetchAll
   const allItems = await Document.fetchAll('items');
+ */
+
+  const doc = await Document.findRetweet({
+    collection: 'tweets',
+    key: '_id',
+    value: '63d3bcec7a1a6c9fad78efa0',
+  });
 
   JSend.success(res, { code: 200 /*  data: allItems */ });
 };
