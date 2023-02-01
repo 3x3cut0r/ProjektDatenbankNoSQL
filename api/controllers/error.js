@@ -1,5 +1,5 @@
 const JSend = require('../utils/jsend');
-const validator = require('validator');
+//const validator = require('validator');
 
 exports.errorHandler = (err, req, res, next) => {
   // set locals, only providing error in development
@@ -8,22 +8,28 @@ exports.errorHandler = (err, req, res, next) => {
 
   // replace "Error: Error:" messages
   if (String(err.message).search('Error: ') >= 0) {
-    data = String(err.message).replaceAll('Error: ', '');
+    err.message = String(err.message).replaceAll('Error: ', '');
+  }
+
+  // catch jwt errors
+  if (String(err.message).search('jwt malformed') >= 0) {
+    err.code = 401;
+    err.message = 'Unauthorized';
   }
 
   // catch database errors
   if (String(err.message).search('Duplicate') >= 0) {
-    code = 400;
+    err.code = 400;
 
     // remove sensitive data: ip address
     let re = new RegExp('(?:[0-9]{1,3}.){3}[0-9]{1,3}', 'i');
-    data = String(err.message).replace(re, '');
+    err.message = String(err.message).replace(re, '');
     // remove sensitive data: :port
     re = new RegExp(
       '((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))',
       'i'
     );
-    data = String(err.message).replace(re, '');
+    err.message = String(err.message).replace(re, '');
   }
 
   // catch sql connection errors
@@ -53,7 +59,6 @@ exports.errorHandler = (err, req, res, next) => {
   else {
     JSend.error(res, {
       code: err.status,
-      // message: is generated from code
       data: err.message,
     });
   }
