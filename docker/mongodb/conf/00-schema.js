@@ -11,27 +11,43 @@ db.createUser({
 
 db = new Mongo().getDB('project');
 
+// create collections
 db.createCollection('users', { capped: false });
 db.createCollection('tweets', { capped: false });
+
+// insert data into collections
+db.users.insert([
+  {
+    _id: ObjectId('63d3bcec7a1a6c9fad78ef96'),
+    username: 'nosql_lover_34',
+  },
+  {
+    _id: ObjectId('63d3bcec7a1a6c9fad78ef97'),
+    username: 'nosql_hater_68',
+  },
+]);
 
 db.tweets.insert([
   {
     _id: ObjectId('63d3bcec7a1a6c9fad78ef98'),
-    title: 'IT is cool',
-    text: 'yey i love IT',
+    userID: ObjectId('63d3bcec7a1a6c9fad78ef96'),
+    title: 'NoSQL is cool',
+    text: 'I love NoSQL!',
+    likes: 15,
+    dislikes: 3,
+    isRetweet: false, // always false, if isRetweet is not given
+    retweetCount: 1, // is updated on retweets
+    timestamp: 1672572600,
   },
   {
     _id: ObjectId('63d3bcec7a1a6c9fad78ef99'),
-    title: 'NoSQL is cool',
-    text: 'yey i love NoSQL',
-    likes: 15,
-    dislikes: 4,
-    retweets: {
-      _id: ObjectId('63d3bcec7a1a6c9fad78efa0'),
-      title: 'seriously?',
-      text: 'SQL is much cooler!',
-      likes: 6,
-      dislikes: 10,
-    },
+    userID: ObjectId('63d3bcec7a1a6c9fad78ef97'),
+    title: 'NoSQL is uncool', // title is ignored on retweets
+    text: 'Really? I hate NoSQL.',
+    likes: 4,
+    dislikes: 8,
+    isRetweet: true,
+    originalTweetID: ObjectId('63d3bcec7a1a6c9fad78ef98'),
+    timestamp: 1672572780,
   },
 ]);
