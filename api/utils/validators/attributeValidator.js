@@ -11,6 +11,7 @@ const validator = require('validator');
  *  - _id ( _id )
  *  - title ( title )
  *  - text ( text )
+ *  - username ( username )
  */
 module.exports = class attributeValidator {
   /**
@@ -56,7 +57,7 @@ module.exports = class attributeValidator {
   }
 
   /**
-   * validates if `text` is a currency
+   * validates if `text` is an alphanumeric text with valid characters (a-zA-Z0-9+-_.:,;&%*()[]{}\'"#!? )
    */
   static text(text) {
     try {
@@ -73,6 +74,26 @@ module.exports = class attributeValidator {
             'text must be alphanumeric (a-zA-Z0-9+-_.:,;&%*()[]{}\'"#!? ): ' +
               text,
           ];
+    } catch (e) {
+      throw Error(e);
+    }
+  }
+
+  /**
+   * validates if `username` is an alphanumeric username with valid characters (a-zA-Z0-9-_)
+   */
+  static username(username) {
+    try {
+      if (username == undefined) {
+        return ['username: key not found'];
+      } else {
+        username = String(username);
+      }
+      return validator.isAlphanumeric(username, 'de-DE', {
+        ignore: '-_',
+      })
+        ? 0
+        : ['username must be alphanumeric (a-zA-Z0-9-_): ' + username];
     } catch (e) {
       throw Error(e);
     }
