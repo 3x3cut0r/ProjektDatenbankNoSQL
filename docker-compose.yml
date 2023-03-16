@@ -43,7 +43,7 @@ services:
     image: mongo-express:latest
     restart: unless-stopped
     ports:
-      - 8087:8081
+      - 8081:8081
     environment:
       TZ: 'Europe/Berlin'
       ME_CONFIG_MONGODB_SERVER: mongo
