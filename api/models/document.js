@@ -9,7 +9,7 @@ const UUID = require('uuid');
 const convertToMongoObjectID = (_id) => {
   // convert _id in mongodb.ObjectId()
   if (typeof _id === 'string' || _id instanceof String) {
-    return mongodb.ObjectId(_id);
+    return new mongodb.ObjectId(_id);
   } else {
     return _id;
   }
@@ -61,7 +61,7 @@ module.exports = class Document {
           .collection(this.collection)
           .insertOne(this.document);
         // add newly created insertedId to Document
-        this.document._id = mongodb.ObjectId(result.insertedId);
+        this.document._id = new mongodb.ObjectId(result.insertedId);
       }
       return this;
     } catch (err) {
@@ -90,10 +90,7 @@ module.exports = class Document {
       // if _id is present, then update
       if (document._id) {
         document._id = convertToMongoObjectID(document._id);
-
-        path = db.collection('tweets');
-        path = db.collection('tweets').document('id').collection('kommentare');
-
+        const path = db.collection(collection);
         const updatedDocument = await path.findOneAndUpdate(
           { _id: document._id },
           { $set: document },
@@ -105,9 +102,8 @@ module.exports = class Document {
       // else: add
       else {
         const result = await db.collection(collection).insertOne(document);
-        console.log('🚀 - save - result', result);
         // add newly created insertedId to Document
-        document._id = mongodb.ObjectId(result.insertedId);
+        document._id = new mongodb.ObjectId(result.insertedId);
       }
       return new Document({ collection, document });
     } catch (err) {
@@ -134,7 +130,6 @@ module.exports = class Document {
   static async findOne({ collection, key, value }) {
     try {
       if (key === '_id') value = convertToMongoObjectID(value);
-
       const db = getDB();
       const document = await db
         .collection(collection)
