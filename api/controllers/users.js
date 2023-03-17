@@ -40,7 +40,7 @@ exports.saveUser = (req, res, next) => {
   // required parameters
   const username = req.body.username ? String(req.body.username).trim() : null;
 
-  const usernameError = attributeValidator.username(username);
+  const usernameError = userValidator.validate({ username });
   if (usernameError) errors = errors.concat(usernameError);
 
   if (_id) {
