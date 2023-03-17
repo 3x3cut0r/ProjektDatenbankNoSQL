@@ -111,22 +111,6 @@ module.exports = class Document {
     }
   }
 
-  static async findRetweet({ collection, key, value }) {
-    try {
-      if (String(key).includes('_id')) value = convertToMongoObjectID(value);
-      const db = getDB();
-      const document = await db
-        .collection(collection)
-        .findOne({ ['retweets.' + key]: value });
-      if (document) {
-        return new Document({ collection, document: document['retweets'] });
-      }
-      return null;
-    } catch (err) {
-      throw err;
-    }
-  }
-
   static async findOne({ collection, key, value }) {
     try {
       if (key === '_id') value = convertToMongoObjectID(value);
