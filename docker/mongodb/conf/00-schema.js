@@ -50,4 +50,12 @@ db.tweets.insert([
     originalTweetID: ObjectId('63d3bcec7a1a6c9fad78ef98'),
     timestamp: 1672572780,
   },
+  {
+    _id: ObjectId('63d3bcec7a1a6c9fad78f001'),
+    userID: ObjectId('63d3bcec7a1a6c9fad78ef97'),
+    title: 'some other tweet',
+    text: 'some text',
+    likes: 1,
+    timestamp: 1672573600,
+  },
 ]);
