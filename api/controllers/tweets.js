@@ -34,8 +34,14 @@ exports.findTweet = (req, res, next) => {
 
 exports.saveTweet = (req, res, next) => {
   var body = req.body;
+
+  // set default values:
+  const _id = req.body._id ? String(req.body._id).trim() : null; // _id
+  const update = _id ? true : false;
   body.timestamp = parseInt(Date.now() / 1000); // create current timestamp
-  const _id = req.body._id ? String(req.body._id).trim() : null;
+  if (update === false) body.isRetweet = false; // set isRetweet to false on new tweets
+  if (Object.values(body).includes('originalTweetID')) body.isRetweet = true; // set isRetweet to true on retweets
+
   let errors = [];
 
   // required parameters
