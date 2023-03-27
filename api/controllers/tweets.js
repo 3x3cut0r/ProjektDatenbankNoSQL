@@ -9,7 +9,7 @@ exports.findTweet = (req, res, next) => {
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
-    // get Tweet
+    // get tweet
     Document.findOne({ collection: 'tweets', key: '_id', value: _id })
       .then((document) => {
         if (document) {
@@ -93,13 +93,87 @@ exports.deleteTweet = (req, res, next) => {
 
   // if valid _id
   if (Object.keys(idError).length === 0) {
-    // delete Tweet
+    // delete tweet
     Document.deleteOne({ collection: 'tweets', key: '_id', value: _id })
       .then((document) => {
         if (document) {
           JSend.success(res, { message: 'deleted', data: document });
         } else {
           JSend.fail(res, { code: 404, data: 'no such _id: ' + _id });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+
+  // if invalid _id
+  else {
+    JSend.fail(res, { data: idError });
+  }
+};
+
+exports.likeTweet = (req, res, next) => {
+  const _id = req.params.id ? String(req.params.id).trim() : null;
+  const idError = attributeValidator._id(_id);
+
+  // if valid _id
+  if (Object.keys(idError).length === 0) {
+    // get tweet
+    Document.findOne({ collection: 'tweets', key: '_id', value: _id })
+      .then((document) => {
+        // update likes
+        if (document) {
+          let likes = document.document.likes;
+          if (likes >= 0) {
+            document.document.likes = ++likes;
+          } else {
+            document.document.likes = 1;
+          }
+          document.save();
+          JSend.success(res, { data: document });
+        } else {
+          JSend.fail(res, {
+            code: 404,
+            data: ['tweet: no such _id: ' + _id],
+          });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+
+  // if invalid _id
+  else {
+    JSend.fail(res, { data: idError });
+  }
+};
+
+exports.dislikeTweet = (req, res, next) => {
+  const _id = req.params.id ? String(req.params.id).trim() : null;
+  const idError = attributeValidator._id(_id);
+
+  // if valid _id
+  if (Object.keys(idError).length === 0) {
+    // get Tweet
+    Document.findOne({ collection: 'tweets', key: '_id', value: _id })
+      .then((document) => {
+        // update dislikes
+        if (document) {
+          let dislikes = document.document.dislikes;
+          if (dislikes >= 0) {
+            document.document.dislikes = ++dislikes;
+          } else {
+            document.document.dislikes = 1;
+          }
+          document.save();
+          JSend.success(res, { data: document });
+        } else {
+          JSend.fail(res, {
+            code: 404,
+            data: ['tweet: no such _id: ' + _id],
+          });
         }
       })
       .catch((err) => {
