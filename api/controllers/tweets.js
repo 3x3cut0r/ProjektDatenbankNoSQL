@@ -33,7 +33,8 @@ exports.findTweet = (req, res, next) => {
 };
 
 exports.saveTweet = (req, res, next) => {
-  const body = req.body;
+  var body = req.body;
+  body.timestamp = parseInt(Date.now() / 1000); // create current timestamp
   const _id = req.body._id ? String(req.body._id).trim() : null;
   let errors = [];
 
