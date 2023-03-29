@@ -20,3 +20,7 @@ pass: admin
 ```
 
 6. open postman and import the [Postman Collection](https://raw.githubusercontent.com/3x3cut0r/ProjektDatenbankNoSQL/main/ProjectDatabaseNoSQL.postman_collection.json) to send postman requests to the api
+
+```shell
+ProjectDatabaseNoSQL.postman_collection.json
+```
