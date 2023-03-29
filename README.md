@@ -6,7 +6,6 @@
 
 ```shell
 docker compose up -d
-
 ```
 
 4. to view the mongodb gui: open a browser and navigate to http://localhost:8081
@@ -18,7 +17,6 @@ URLs:
 api: http://localhost:8081
 login: admin
 pass: admin
-
 ```
 
 6. open postman and import the ProjectDatabaseNoSQL.postman_collection.json to send postman requests to the api
