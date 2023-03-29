@@ -5,7 +5,7 @@ let dbo;
 
 const mongoConnect = () => {
   MongoClient.connect(
-    'mongodb://project:project@localhost:27017/project?retryWrites=true&w=majority',
+    'mongodb://project:project@mongo:27017/project?retryWrites=true&w=majority',
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
     .then((client) => {

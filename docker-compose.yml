@@ -2,23 +2,23 @@ version: '3.9'
 
 services:
   # https://hub.docker.com/_/node
-  #  api:
-  #    build:
-  #      context: ./api
-  #      dockerfile: ../docker/api/Dockerfile
-  #    container_name: api
-  #    stdin_open: true
-  #    environment:
-  #      PORT: 3001
-  #      NODE_ENV: development
-  #      CHOKIDAR_USEPOLLING: true
-  #    volumes:
-  #      - ./api:/app
-  #      - /app/node_modules
-  #    ports:
-  #      - '3001:3001'
-  #    depends_on:
-  #      - mongo
+  api:
+    build:
+      context: ./api
+      dockerfile: ../docker/api/Dockerfile
+    container_name: api
+    stdin_open: true
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: true
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    ports:
+      - '3001:3001'
+    depends_on:
+      - mongo
 
   # https://hub.docker.com/_/mongo
   mongo:
