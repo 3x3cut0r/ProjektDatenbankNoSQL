@@ -19,4 +19,4 @@ login: admin
 pass: admin
 ```
 
-6. open postman and import the [Postman Collection](https://raw.githubusercontent.com/3x3cut0r/ProjektDatenbankNoSQL/main/ProjectDatabaseNoSQL.postman_collection.json?token=GHSAT0AAAAAACAIX4H2BROOJ75DQ7VPL3VGZBD5FZA) to send postman requests to the api
+6. open postman and import the [Postman Collection](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/3x3cut0r/ProjektDatenbankNoSQL/blob/main/ProjectDatabaseNoSQL.postman_collection.json) to send postman requests to the api
