@@ -1,14 +1,11 @@
 # Howto run this project:
 
 1. install docker(-desktop) from https://www.docker.com/products/docker-desktop/
-2. install nodejs 18 from https://nodejs.org/en/download/
+2. install postman from https://www.postman.com/downloads/
 3. open a shell, navigate to project folder and run:
 
 ```shell
 docker compose up -d
-cd api
-npm i
-nodemon start
 
 ```
 
@@ -23,3 +20,5 @@ login: admin
 pass: admin
 
 ```
+
+6. open postman and import the ProjectDatabaseNoSQL.postman_collection.json to send postman requests to the api
